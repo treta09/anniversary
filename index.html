@@ -7,6 +7,18 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <div class="background-glow"></div>
+  <div class="confetti">
+    <span class="confetti-dot dot-1"></span>
+    <span class="confetti-dot dot-2"></span>
+    <span class="confetti-dot dot-3"></span>
+    <span class="confetti-dot dot-4"></span>
+    <span class="confetti-dot dot-5"></span>
+    <span class="confetti-dot dot-6"></span>
+    <span class="confetti-dot dot-7"></span>
+    <span class="confetti-dot dot-8"></span>
+    <span class="confetti-dot dot-9"></span>
+  </div>
   <header class="site-header">
     <div class="container">
       <h1 class="logo">Anniversary</h1>
@@ -68,9 +80,9 @@
             <span>✨</span>
           </div>
           <div class="essay-block" id="essayBlock">
-            <p>I love you muhc my bubu please.</p>
-            <p>Each day with you is a bright chapter filled with laughter, comfort, and moments that turn ordinary time into something beautiful. I cherish the way your smile changes the room, the way your hand feels in mine, and the way our dreams feel easier when they are shared.</p>
-            <p>Today we celebrate what we have built together — a gentle, joyful love that grows stronger every year. Thank you for being the reason my heart feels at home.</p>
+            <p>Every beat of my heart carries your name. You make the simplest moments warm, the quietest nights bright, and the future feel like a promise I cannot wait to keep.</p>
+            <p>With you, laughter becomes music and every ordinary day turns into a memory I want to hold forever. Your kindness, your smile, and your caring spirit are the colors that make my world beautiful.</p>
+            <p>Happy anniversary to the one who fills my life with joy. I love you always, more than words can say, and I am grateful for every moment we share.</p>
           </div>
           <div class="image-strip">
             <div class="photo photo-small">❤</div>
@@ -136,11 +148,13 @@
 
       function show(el) {
         el.style.display = '';
+        el.classList.add('show');
         el.setAttribute('aria-hidden', 'false');
       }
-
+ 
       function hide(el) {
         el.style.display = 'none';
+        el.classList.remove('show');
         el.setAttribute('aria-hidden', 'true');
       }
 
@@ -169,7 +183,7 @@
       const yesBtn = document.getElementById('yesBtn');
       const noBtn = document.getElementById('noBtn');
       const resultMsg = document.getElementById('resultMsg');
-      const hearts = document.getElementById('hearts');
+      const hearts = document.getElementById('heartRow');
       const againBtn = document.getElementById('againBtn');
       const downloadBtn = document.getElementById('downloadBtn');
       let scale = 1.0;
@@ -191,7 +205,7 @@
         ctx.textAlign = 'center';
         ctx.fillText('Happy 6th Anniversary', width / 2, 120);
         ctx.font = '32px system-ui, Arial';
-        wrapText(ctx, 'I love you muhc my bubu please. Every day with you feels brighter and every memory sweeter.', width / 2, 200, 920, 42);
+        wrapText(ctx, 'I love you so much, my love. Every day with you feels brighter and every memory sweeter.', width / 2, 200, 920, 42);
         ctx.fillStyle = '#ff3f7a';
         ctx.font = '72px serif';
         ctx.fillText('❤', width / 2, 420);
@@ -234,15 +248,15 @@
         playMelody();
         window.setTimeout(playChime, 520);
         hide(step2);
-        resultMsg.innerHTML = `I love you muhc my bubu please <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
+        resultMsg.innerHTML = `I love you soooo much, my love <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
         hearts.innerHTML = '';
         for (let i = 0; i < 18; i += 1) {
           const span = document.createElement('span');
           span.className = 'floating-heart';
           span.textContent = heartSymbol;
-          span.style.left = `${10 + Math.random() * 80}%`;
+          span.style.left = `${8 + Math.random() * 84}%`;
           span.style.animationDelay = `${Math.random() * 1.5}s`;
-          span.style.fontSize = `${18 + Math.random() * 42}px`;
+          span.style.fontSize = `${20 + Math.random() * 40}px`;
           hearts.appendChild(span);
         }
         show(result);
