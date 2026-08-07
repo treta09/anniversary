@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Anniversary — Simple Site</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="logo">Anniversary</h1>
+      <nav class="nav">
+        <a href="#home">Home</a>
+        <a href="#about">About</a>
+        <a href="#gallery">Gallery</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <div class="stage">
+        <div class="card" id="step1">
+          <h2>Happy 6th Anniversary, my love</h2>
+          <p class="lead">Every moment with you is a treasure. Click next to tell me something.</p>
+          <p><button class="btn" id="nextBtn">Next</button></p>
+        </div>
+
+        <div class="card" id="step2" aria-hidden="true" style="display:none">
+          <h2>Do you love me?</h2>
+          <div class="options">
+            <button class="opt yes" id="yesBtn">Yes</button>
+            <button class="opt no" id="noBtn">No</button>
+          </div>
+        </div>
+
+        <div class="card" id="result" aria-hidden="true" style="display:none">
+          <h2 id="resultMsg"></h2>
+          <div class="hearts" id="hearts" aria-hidden="true"></div>
+          <p><button class="btn" id="againBtn" style="margin-top:1rem;">Again</button></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function(){n      // Simple WebAudio helper for short UI sounds
+      let audioCtx = null;n      function ensureAudio(){n        if(audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      function playTone(freq, type = 'sine', duration = 0.12, when = 0, vol = 0.08){
+        if(!audioCtx) return;
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
+        g.gain.setValueAtTime(vol, audioCtx.currentTime + when);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(audioCtx.currentTime + when);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
+        o.stop(audioCtx.currentTime + when + duration + 0.02);
+      }
+
+      function playPop(){ ensureAudio(); playTone(880,'square',0.06,0,0.06); }
+
+      function playTease(){ // a quick descending pair when user clicks No
+        ensureAudio();
+        playTone(660,'sine',0.08,0,0.07);
+        playTone(520,'sine',0.12,0.09,0.055);
+      }
+
+      function playMelody(){ // short happy melody for Yes
+        ensureAudio();
+        const notes = [520,660,780,880];
+        notes.forEach((n,i)=> playTone(n,'sine',0.18,i*0.18,0.08));
+      }
+n      function playChime(){ // gentle chime on show result
+        ensureAudio();
+        playTone(1200,'sine',0.5,0,0.05);
+        playTone(900,'sine',0.6,0.08,0.04);
+      }
+
+      const nextBtn = document.getElementById('nextBtn');
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const result = document.getElementById('result');
+      const yesBtn = document.getElementById('yesBtn');
+      const noBtn = document.getElementById('noBtn');
+      const resultMsg = document.getElementById('resultMsg');
+      const hearts = document.getElementById('hearts');
+      const againBtn = document.getElementById('againBtn');
+
+      let scale = 1.0;
+
+      function show(el){ el.style.display = ''; el.setAttribute('aria-hidden','false'); }
+      function hide(el){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); }
+
+      // Start audio on first user gesture if needed
+      function resumeAudioOnGesture(){
+        if(!audioCtx) return;
+        if(audioCtx.state === 'suspended'){
+          audioCtx.resume();
+        }
+      }
+
+      nextBtn.addEventListener('click', ()=>{
+        // create context early so subsequent clicks are audible in all browsers
+        ensureAudio(); resumeAudioOnGesture(); playPop();
+        hide(step1);
+        show(step2);
+        yesBtn.focus();
+      });
+
+      noBtn.addEventListener('click', ()=>{
+        // Make the Yes button bigger each time No is clicked
+        scale = Math.min(scale * 1.25, 6); // cap to avoid runaway size
+        yesBtn.style.transform = `scale(${scale})`;
+        yesBtn.style.transition = 'transform 300ms cubic-bezier(.2,.9,.2,1)';
+        // Add a playful wiggle to the No button so user sees reaction
+        noBtn.classList.remove('wiggle');
+        void noBtn.offsetWidth; // force reflow to restart animation
+        noBtn.classList.add('wiggle');
+        // play a teasing sound
+        ensureAudio(); resumeAudioOnGesture(); playTease();
+        yesBtn.focus();
+      });
+
+      yesBtn.addEventListener('click', ()=>{
+        ensureAudio(); resumeAudioOnGesture();
+        // sensory confirmation before changing view
+        playMelody(); setTimeout(playChime, 520);
+n        hide(step2);
+        resultMsg.innerHTML = 'I love you soooo much, my bubu <span class="heart">❤❤❤</span>';
+        // create floating hearts
+        hearts.innerHTML = '';
+        for(let i=0;i<18;i++){
+          const s = document.createElement('span');
+          s.className = 'floating-heart';
+          s.textContent = '❤';
+          s.style.left = (10 + Math.random()*80) + '%';
+          s.style.animationDelay = (Math.random()*1.5)+'s';
+          s.style.fontSize = (12 + Math.random()*36) + 'px';
+          hearts.appendChild(s);
+        }
+        show(result);
+        againBtn.focus();
+      });
+
+      againBtn.addEventListener('click', ()=>{
+        // reset flow
+        hide(result);
+        scale = 1.0;
+        yesBtn.style.transform = '';
+        show(step1);
+        nextBtn.focus();
+      });
+
+      // Allow keyboard support: Enter triggers focused button
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){
+          const active = document.activeElement;
+          if(active && active.tagName === 'BUTTON') active.click();
+        }
+      });
+    })();
+  </script>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 Anniversary • Built with HTML &amp; CSS</p>
+    </div>
+  </footer>
+</body>
+</html>
