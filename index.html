@@ -48,7 +48,7 @@
             <span class="badge badge-soft">Tell me the truth</span>
           </div>
           <h2>Do you love me?</h2>
-          <p class="lead">Choose wisely — love is the reason for every celebration.</p>
+          <p class="lead">Choose wisely love is the reason for every celebration.</p>
           <div class="options">
             <button class="opt yes" id="yesBtn" type="button">Yes</button>
             <button class="opt no" id="noBtn" type="button">No</button>
@@ -107,9 +107,12 @@
   </main>
 
   <script>
-    (function () {      // Simple WebAudio helper for short UI sounds
+    (function () {
+      // Simple WebAudio helper for short UI sounds
       let audioCtx = null;
-      const heartSymbol = '💖';      function ensureAudio() {        if (audioCtx) return;
+      const heartSymbol = '💖';
+      function ensureAudio() {
+        if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
 
@@ -157,7 +160,8 @@
         const notes = [520,660,780,880];
         notes.forEach((n,i)=> playTone(n,'sine',0.18,i*0.18,0.08));
       }
-      function playChime() { // gentle chime on show result
+
+      function playChime() { // gentle chime on show result
         ensureAudio();
         playTone(1200,'sine',0.5,0,0.05);
         playTone(900,'sine',0.6,0.08,0.04);
