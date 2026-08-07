@@ -1,9 +1,9 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Anniversary — Simple Site</title>
+  <title>Anniversary — Interactive Card</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -24,15 +24,15 @@
       <div class="stage">
         <div class="card" id="step1">
           <h2>Happy 6th Anniversary, my love</h2>
-          <p class="lead">Every moment with you is a treasure. Click next to tell me something.</p>
-          <p><button class="btn" id="nextBtn">Next</button></p>
+          <p class="lead">Every moment with you is a treasure. Click Next to continue.</p>
+          <p><button class="btn" id="nextBtn" type="button">Next</button></p>
         </div>
 
         <div class="card" id="step2" aria-hidden="true" style="display:none">
           <h2>Do you love me?</h2>
           <div class="options">
-            <button class="opt yes" id="yesBtn">Yes</button>
-            <button class="opt no" id="noBtn">No</button>
+            <button class="opt yes" id="yesBtn" type="button">Yes</button>
+            <button class="opt no" id="noBtn" type="button">No</button>
           </div>
         </div>
 
@@ -40,8 +40,8 @@
           <h2 id="resultMsg"></h2>
           <div class="hearts" id="hearts" aria-hidden="true"></div>
           <p>
-            <button class="btn download" id="downloadBtn" style="margin-top:0.5rem;margin-right:.5rem;">Download card</button>
-            <button class="btn" id="againBtn" style="margin-top:0.5rem;">Again</button>
+            <button class="btn download" id="downloadBtn" type="button" style="margin-top:0.5rem;margin-right:.5rem;">Download card</button>
+            <button class="btn" id="againBtn" type="button" style="margin-top:0.5rem;">Again</button>
           </p>
         </div>
       </div>
@@ -49,40 +49,78 @@
   </main>
 
   <script>
-    (function(){n      // Simple WebAudio helper for short UI sounds
-      let audioCtx = null;n      function ensureAudio(){n        if(audioCtx) return;
+    (function () {
+      const heartSymbol = '\u2764';
+      let audioCtx = null;
+
+      function ensureAudio() {
+        if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
 
-      function playTone(freq, type = 'sine', duration = 0.12, when = 0, vol = 0.08){
-        if(!audioCtx) return;
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
-        g.gain.setValueAtTime(vol, audioCtx.currentTime + when);
-        o.connect(g); g.connect(audioCtx.destination);
-        o.start(audioCtx.currentTime + when);
-        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
-        o.stop(audioCtx.currentTime + when + duration + 0.02);
+      function playTone(freq, type = 'sine', duration = 0.12, when = 0, volume = 0.08) {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
+        gain.gain.setValueAtTime(volume, audioCtx.currentTime + when);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + when);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
+        osc.stop(audioCtx.currentTime + when + duration + 0.02);
       }
 
-      function playPop(){ ensureAudio(); playTone(880,'square',0.06,0,0.06); }
-
-      function playTease(){ // a quick descending pair when user clicks No
+      function playPop() {
         ensureAudio();
-        playTone(660,'sine',0.08,0,0.07);
-        playTone(520,'sine',0.12,0.09,0.055);
+        playTone(880, 'square', 0.06, 0, 0.06);
       }
 
-      function playMelody(){ // short happy melody for Yes
+      function playTease() {
         ensureAudio();
-        const notes = [520,660,780,880];
-        notes.forEach((n,i)=> playTone(n,'sine',0.18,i*0.18,0.08));
+        playTone(660, 'sine', 0.08, 0, 0.07);
+        playTone(520, 'sine', 0.12, 0.09, 0.055);
       }
-n      function playChime(){ // gentle chime on show result
+
+      function playMelody() {
         ensureAudio();
-        playTone(1200,'sine',0.5,0,0.05);
-        playTone(900,'sine',0.6,0.08,0.04);
+        const notes = [520, 660, 780, 880];
+        notes.forEach((note, index) => playTone(note, 'sine', 0.18, index * 0.18, 0.08));
+      }
+
+      function playChime() {
+        ensureAudio();
+        playTone(1200, 'sine', 0.5, 0, 0.05);
+        playTone(900, 'sine', 0.6, 0.08, 0.04);
+      }
+
+      function show(element) {
+        element.style.display = '';
+        element.setAttribute('aria-hidden', 'false');
+      }
+
+      function hide(element) {
+        element.style.display = 'none';
+        element.setAttribute('aria-hidden', 'true');
+      }
+
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+        const words = text.split(' ');
+        let line = '';
+        for (let n = 0; n < words.length; n += 1) {
+          const testLine = `${line}${words[n]} `;
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0) {
+            ctx.fillText(line, x, y);
+            line = `${words[n]} `;
+            y += lineHeight;
+          } else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, y);
       }
 
       const nextBtn = document.getElementById('nextBtn');
@@ -94,122 +132,102 @@
       const resultMsg = document.getElementById('resultMsg');
       const hearts = document.getElementById('hearts');
       const againBtn = document.getElementById('againBtn');
-
+      const downloadBtn = document.getElementById('downloadBtn');
       let scale = 1.0;
 
-      function show(el){ el.style.display = ''; el.setAttribute('aria-hidden','false'); }
-      function hide(el){ el.style.display = 'none'; el.setAttribute('aria-hidden','true'); }
-
-      // Start audio on first user gesture if needed
-      function resumeAudioOnGesture(){
-        if(!audioCtx) return;
-        if(audioCtx.state === 'suspended'){
-          audioCtx.resume();
+      function generateCardImage() {
+        const width = 1200;
+        const height = 630;
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, '#fff5f8');
+        gradient.addColorStop(1, '#ffffff');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, width, height);
+        ctx.fillStyle = '#25303b';
+        ctx.font = '48px system-ui, Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Happy 6th Anniversary, my love', width / 2, 120);
+        ctx.fillStyle = '#6b7785';
+        ctx.font = '28px system-ui, Arial';
+        wrapText(ctx, `I love you soooo much, my ${heartSymbol} ${heartSymbol} ${heartSymbol}`, width / 2, 200, 920, 36);
+        for (let i = 0; i < 14; i += 1) {
+          const x = 80 + Math.random() * (width - 160);
+          const y = 260 + Math.random() * 290;
+          ctx.fillStyle = '#ff3366';
+          ctx.font = `${18 + Math.random() * 36}px serif`;
+          ctx.fillText(heartSymbol, x, y);
         }
+        return canvas.toDataURL('image/png');
       }
 
-      nextBtn.addEventListener('click', ()=>{
-        // create context early so subsequent clicks are audible in all browsers
-        ensureAudio(); resumeAudioOnGesture(); playPop();
+      nextBtn.addEventListener('click', () => {
+        ensureAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        playPop();
         hide(step1);
         show(step2);
         yesBtn.focus();
       });
 
-      noBtn.addEventListener('click', ()=>{
-        // Make the Yes button bigger each time No is clicked
-        scale = Math.min(scale * 1.25, 6); // cap to avoid runaway size
+      noBtn.addEventListener('click', () => {
+        scale = Math.min(scale * 1.25, 6);
         yesBtn.style.transform = `scale(${scale})`;
         yesBtn.style.transition = 'transform 300ms cubic-bezier(.2,.9,.2,1)';
-        // Add a playful wiggle to the No button so user sees reaction
         noBtn.classList.remove('wiggle');
-        void noBtn.offsetWidth; // force reflow to restart animation
+        void noBtn.offsetWidth;
         noBtn.classList.add('wiggle');
-        // play a teasing sound
-        ensureAudio(); resumeAudioOnGesture(); playTease();
-        // add an energetic pulse when Yes grows
+        ensureAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        playTease();
         yesBtn.classList.add('pulse');
-        setTimeout(()=> yesBtn.classList.remove('pulse'), 450);
+        window.setTimeout(() => yesBtn.classList.remove('pulse'), 450);
         yesBtn.focus();
       });
 
-      yesBtn.addEventListener('click', ()=>{
-        ensureAudio(); resumeAudioOnGesture();
-        // sensory confirmation before changing view
-        playMelody(); setTimeout(playChime, 520);
-n        hide(step2);
-        resultMsg.innerHTML = 'I love you soooo much, my bubu <span class="heart">❤❤❤</span>';
-        // create floating hearts
+      yesBtn.addEventListener('click', () => {
+        ensureAudio();
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        playMelody();
+        window.setTimeout(playChime, 520);
+        hide(step2);
+        resultMsg.innerHTML = `I love you soooo much, my bubu <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
         hearts.innerHTML = '';
-        for(let i=0;i<18;i++){
-          const s = document.createElement('span');
-          s.className = 'floating-heart';
-          s.textContent = '❤';
-          s.style.left = (10 + Math.random()*80) + '%';
-          s.style.animationDelay = (Math.random()*1.5)+'s';
-          s.style.fontSize = (12 + Math.random()*36) + 'px';
-          hearts.appendChild(s);
+        for (let i = 0; i < 18; i += 1) {
+          const span = document.createElement('span');
+          span.className = 'floating-heart';
+          span.textContent = heartSymbol;
+          span.style.left = `${10 + Math.random() * 80}%`;
+          span.style.animationDelay = `${Math.random() * 1.5}s`;
+          span.style.fontSize = `${12 + Math.random() * 36}px`;
+          hearts.appendChild(span);
         }
         show(result);
         againBtn.focus();
       });
 
-      // Download card implementation
-      const downloadBtn = document.getElementById('downloadBtn');
-      function generateCardImage(){
-        const width = 1200, height = 630;
-        const canvas = document.createElement('canvas');
-        canvas.width = width; canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        // background gradient
-        const g = ctx.createLinearGradient(0,0,0,height);
-        g.addColorStop(0, '#fff5f8'); g.addColorStop(1, '#fff');
-        ctx.fillStyle = g; ctx.fillRect(0,0,width,height);
-        // header text
-        ctx.fillStyle = '#25303b'; ctx.font = '48px system-ui, Arial'; ctx.textAlign = 'center';
-        ctx.fillText('Happy 6th Anniversary, my love', width/2, 120);
-        // message text
-        ctx.fillStyle = '#6b7785'; ctx.font = '28px system-ui, Arial';
-        wrapText(ctx, 'I love you soooo much, my bubu ❤❤❤', width/2, 200, 920, 36);
-        // draw small hearts
-        for(let i=0;i<14;i++){
-          const x = 80 + Math.random()*(width-160);
-          const y = 260 + Math.random()*290;
-          ctx.fillStyle = '#ff3366';
-          ctx.font = (18 + Math.random()*36) + 'px serif';
-          ctx.fillText('❤', x, y);
-        }
-        return canvas.toDataURL('image/png');
-      }
-      function wrapText(ctx, text, x, y, maxWidth, lineHeight){
-        const words = text.split(' ');
-        let line = '';
-        for(let n = 0; n < words.length; n++){
-          const testLine = line + words[n] + ' ';
-          const metrics = ctx.measureText(testLine);
-          const testWidth = metrics.width;
-          if (testWidth > maxWidth && n > 0){
-            ctx.fillText(line, x, y);
-            line = words[n] + ' ';
-            y += lineHeight;
-          }
-          else {
-            line = testLine;
-          }
-        }
-        ctx.fillText(line, x, y);
-      }
-      downloadBtn.addEventListener('click', ()=>{
-        const data = generateCardImage();
-        const a = document.createElement('a');
-        a.href = data; a.download = 'anniversary-card.png';
-        document.body.appendChild(a); a.click(); a.remove();
-        // play a little pop
-        ensureAudio(); playPop();
+      downloadBtn.addEventListener('click', () => {
+        const dataUrl = generateCardImage();
+        const anchor = document.createElement('a');
+        anchor.href = dataUrl;
+        anchor.download = 'anniversary-card.png';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        ensureAudio();
+        playPop();
       });
 
-      againBtn.addEventListener('click', ()=>{
-        // reset flow
+      againBtn.addEventListener('click', () => {
         hide(result);
         scale = 1.0;
         yesBtn.style.transform = '';
@@ -217,11 +235,12 @@
         nextBtn.focus();
       });
 
-      // Allow keyboard support: Enter triggers focused button
-      document.addEventListener('keydown', (e)=>{
-        if(e.key === 'Enter'){
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
           const active = document.activeElement;
-          if(active && active.tagName === 'BUTTON') active.click();
+          if (active && active.tagName === 'BUTTON') {
+            active.click();
+          }
         }
       });
     })();
