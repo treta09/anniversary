@@ -39,7 +39,10 @@
         <div class="card" id="result" aria-hidden="true" style="display:none">
           <h2 id="resultMsg"></h2>
           <div class="hearts" id="hearts" aria-hidden="true"></div>
-          <p><button class="btn" id="againBtn" style="margin-top:1rem;">Again</button></p>
+          <p>
+            <button class="btn download" id="downloadBtn" style="margin-top:0.5rem;margin-right:.5rem;">Download card</button>
+            <button class="btn" id="againBtn" style="margin-top:0.5rem;">Again</button>
+          </p>
         </div>
       </div>
     </div>
@@ -124,6 +127,9 @@
         noBtn.classList.add('wiggle');
         // play a teasing sound
         ensureAudio(); resumeAudioOnGesture(); playTease();
+        // add an energetic pulse when Yes grows
+        yesBtn.classList.add('pulse');
+        setTimeout(()=> yesBtn.classList.remove('pulse'), 450);
         yesBtn.focus();
       });
 
@@ -146,6 +152,60 @@
         }
         show(result);
         againBtn.focus();
+      });
+
+      // Download card implementation
+      const downloadBtn = document.getElementById('downloadBtn');
+      function generateCardImage(){
+        const width = 1200, height = 630;
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        // background gradient
+        const g = ctx.createLinearGradient(0,0,0,height);
+        g.addColorStop(0, '#fff5f8'); g.addColorStop(1, '#fff');
+        ctx.fillStyle = g; ctx.fillRect(0,0,width,height);
+        // header text
+        ctx.fillStyle = '#25303b'; ctx.font = '48px system-ui, Arial'; ctx.textAlign = 'center';
+        ctx.fillText('Happy 6th Anniversary, my love', width/2, 120);
+        // message text
+        ctx.fillStyle = '#6b7785'; ctx.font = '28px system-ui, Arial';
+        wrapText(ctx, 'I love you soooo much, my bubu ❤❤❤', width/2, 200, 920, 36);
+        // draw small hearts
+        for(let i=0;i<14;i++){
+          const x = 80 + Math.random()*(width-160);
+          const y = 260 + Math.random()*290;
+          ctx.fillStyle = '#ff3366';
+          ctx.font = (18 + Math.random()*36) + 'px serif';
+          ctx.fillText('❤', x, y);
+        }
+        return canvas.toDataURL('image/png');
+      }
+      function wrapText(ctx, text, x, y, maxWidth, lineHeight){
+        const words = text.split(' ');
+        let line = '';
+        for(let n = 0; n < words.length; n++){
+          const testLine = line + words[n] + ' ';
+          const metrics = ctx.measureText(testLine);
+          const testWidth = metrics.width;
+          if (testWidth > maxWidth && n > 0){
+            ctx.fillText(line, x, y);
+            line = words[n] + ' ';
+            y += lineHeight;
+          }
+          else {
+            line = testLine;
+          }
+        }
+        ctx.fillText(line, x, y);
+      }
+      downloadBtn.addEventListener('click', ()=>{
+        const data = generateCardImage();
+        const a = document.createElement('a');
+        a.href = data; a.download = 'anniversary-card.png';
+        document.body.appendChild(a); a.click(); a.remove();
+        // play a little pop
+        ensureAudio(); playPop();
       });
 
       againBtn.addEventListener('click', ()=>{
