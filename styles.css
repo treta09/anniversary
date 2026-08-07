@@ -24,27 +24,28 @@ html, body {
 body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   min-height: 100vh;
-  background: radial-gradient(circle at 15% 10%, rgba(255, 255, 255, 0.96), transparent 10%),
-              radial-gradient(circle at 85% 14%, rgba(255, 222, 247, 0.95), transparent 13%),
-              radial-gradient(circle at 28% 50%, rgba(235, 209, 255, 0.85), transparent 17%),
-              radial-gradient(circle at 68% 84%, rgba(255, 246, 255, 0.76), transparent 20%),
-              linear-gradient(145deg, #fff6ff 0%, #ffe4fb 30%, #f8eaff 55%, #f1ecff 78%, #fcf9ff 100%);
-  background-size: 200% 200%;
+  background: radial-gradient(circle at 12% 6%, rgba(255, 255, 255, 0.96), transparent 12%),
+              radial-gradient(circle at 85% 10%, rgba(255, 211, 246, 0.92), transparent 14%),
+              radial-gradient(circle at 20% 52%, rgba(221, 185, 255, 0.9), transparent 16%),
+              radial-gradient(circle at 72% 82%, rgba(255, 245, 255, 0.78), transparent 20%),
+              linear-gradient(145deg, #fff8ff 0%, #ffeeff 24%, #f6e8ff 46%, #efe3ff 68%, #fdfbff 100%);
+  background-size: 210% 210%;
   background-attachment: fixed;
   color: var(--text);
   line-height: 1.6;
-  animation: drift 22s ease infinite;
+  animation: drift 24s ease infinite;
 }
 
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: radial-gradient(circle at 12% 15%, rgba(255,255,255,0.7) 0%, transparent 7%),
-                    radial-gradient(circle at 72% 18%, rgba(255,240,251,0.45) 0%, transparent 10%),
-                    radial-gradient(circle at 45% 72%, rgba(252, 238, 251, 0.32) 0%, transparent 14%),
-                    radial-gradient(circle at 80% 78%, rgba(255, 234, 247, 0.22) 0%, transparent 16%);
-  opacity: 0.78;
+  background-image: radial-gradient(circle at 14% 14%, rgba(255,255,255,0.75) 0%, transparent 8%),
+                    radial-gradient(circle at 78% 18%, rgba(255, 246, 255, 0.45) 0%, transparent 10%),
+                    radial-gradient(circle at 34% 72%, rgba(255, 229, 246, 0.34) 0%, transparent 13%),
+                    radial-gradient(circle at 80% 78%, rgba(255, 244, 249, 0.26) 0%, transparent 16%),
+                    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.18) 0%, transparent 11%);
+  opacity: 0.82;
   pointer-events: none;
 }
 
@@ -52,13 +53,14 @@ body::before {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(circle at 16% 12%, rgba(255, 178, 235, 0.5), transparent 18%),
-              radial-gradient(circle at 76% 16%, rgba(188, 160, 255, 0.3), transparent 16%),
-              radial-gradient(circle at 52% 70%, rgba(255, 248, 247, 0.34), transparent 24%),
-              radial-gradient(circle at 62% 40%, rgba(210, 188, 255, 0.16), transparent 14%),
-              radial-gradient(circle at 30% 88%, rgba(255, 240, 245, 0.22), transparent 18%);
+  background: radial-gradient(circle at 16% 12%, rgba(255, 184, 240, 0.52), transparent 18%),
+              radial-gradient(circle at 76% 16%, rgba(196, 162, 255, 0.28), transparent 16%),
+              radial-gradient(circle at 48% 66%, rgba(255, 245, 248, 0.34), transparent 24%),
+              radial-gradient(circle at 62% 38%, rgba(210, 188, 255, 0.18), transparent 14%),
+              radial-gradient(circle at 32% 88%, rgba(255, 241, 248, 0.24), transparent 18%),
+              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18), transparent 20%);
   opacity: 1;
-  filter: blur(2px);
+  filter: blur(2.6px);
   animation: glowPulse 10s ease-in-out infinite alternate;
 }
 
