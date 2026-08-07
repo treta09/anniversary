@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -22,12 +22,6 @@
   <header class="site-header">
     <div class="container">
       <h1 class="logo">Anniversary</h1>
-      <nav class="nav">
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#gallery">Gallery</a>
-        <a href="#contact">Contact</a>
-      </nav>
     </div>
   </header>
 
@@ -44,14 +38,7 @@
           <div class="intro-art">
             <div class="sparkle sparkle-1">✨</div>
             <div class="sparkle sparkle-2">🌸</div>
-            <div class="sparkle sparkle-3">🌸</div>
-            <div class="sparkle sparkle-4">🌸</div>
-            <div class="sparkle sparkle-5">✨</div>
-
-
-
-            
-            
+            <div class="sparkle sparkle-3">💖</div>
           </div>
           <p><button class="btn" id="nextBtn" type="button">Next</button></p>
         </div>
@@ -61,7 +48,7 @@
             <span class="badge badge-soft">Tell me the truth</span>
           </div>
           <h2>Do you love me?</h2>
-          <p class="lead">Choose wisely love is the reason for every celebration.</p>
+          <p class="lead">Choose wisely — love is the reason for every celebration.</p>
           <div class="options">
             <button class="opt yes" id="yesBtn" type="button">Yes</button>
             <button class="opt no" id="noBtn" type="button">No</button>
@@ -90,6 +77,13 @@
             <div class="photo photo-small">✨</div>
             <div class="photo photo-medium">🌙</div>
           </div>
+          <div class="download-preview">
+            <div class="preview-card">
+              <div class="preview-heart">💖</div>
+              <p>Save this sweet anniversary card to keep the memory forever.</p>
+            </div>
+          </div>
+          <div class="result-note">Click the button below to download your custom anniversary card.</div>
           <p>
             <button class="btn download" id="downloadBtn" type="button">Download card</button>
             <button class="btn" id="againBtn" type="button">Again</button>
@@ -100,80 +94,60 @@
   </main>
 
   <script>
-    (function () {
-      const heartSymbol = '\u2764';
+    (function () {      // Simple WebAudio helper for short UI sounds
       let audioCtx = null;
-
-      function ensureAudio() {
-        if (audioCtx) return;
+      const heartSymbol = '💖';      function ensureAudio() {        if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
 
-      function playTone(freq, type = 'sine', duration = 0.12, when = 0, volume = 0.08) {
-        if (!audioCtx) return;
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = type;
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
-        gain.gain.setValueAtTime(volume, audioCtx.currentTime + when);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start(audioCtx.currentTime + when);
-        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
-        osc.stop(audioCtx.currentTime + when + duration + 0.02);
-      }
-
-      function playPop() {
-        ensureAudio();
-        playTone(880, 'square', 0.06, 0, 0.06);
-      }
-
-      function playTease() {
-        ensureAudio();
-        playTone(660, 'sine', 0.08, 0, 0.07);
-        playTone(520, 'sine', 0.12, 0.09, 0.055);
-      }
-
-      function playMelody() {
-        ensureAudio();
-        const notes = [520, 660, 780, 880, 1040];
-        notes.forEach((note, index) => playTone(note, 'sine', 0.18, index * 0.15, 0.08));
-      }
-
-      function playChime() {
-        ensureAudio();
-        playTone(1200, 'sine', 0.5, 0, 0.05);
-        playTone(900, 'sine', 0.6, 0.08, 0.04);
-      }
-
-      function show(el) {
-        el.style.display = '';
-        el.classList.add('show');
-        el.setAttribute('aria-hidden', 'false');
-      }
- 
-      function hide(el) {
-        el.style.display = 'none';
-        el.classList.remove('show');
-        el.setAttribute('aria-hidden', 'true');
+      function playTone(freq, type = 'sine', duration = 0.12, when = 0, vol = 0.08){
+        if(!audioCtx) return;
+        const o = audioCtx.createOscillator();
+        const g = audioCtx.createGain();
+        o.type = type; o.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
+        g.gain.setValueAtTime(vol, audioCtx.currentTime + when);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(audioCtx.currentTime + when);
+        g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
+        o.stop(audioCtx.currentTime + when + duration + 0.02);
       }
 
       function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
         const words = text.split(' ');
         let line = '';
+
         for (let n = 0; n < words.length; n += 1) {
-          const testLine = `${line}${words[n]} `;
+          const testLine = line + words[n] + ' ';
           const metrics = ctx.measureText(testLine);
           const testWidth = metrics.width;
           if (testWidth > maxWidth && n > 0) {
-            ctx.fillText(line, x, y);
-            line = `${words[n]} `;
+            ctx.fillText(line.trim(), x, y);
+            line = words[n] + ' ';
             y += lineHeight;
           } else {
             line = testLine;
           }
         }
-        ctx.fillText(line, x, y);
+        ctx.fillText(line.trim(), x, y);
+      }
+
+      function playPop(){ ensureAudio(); playTone(880,'square',0.06,0,0.06); }
+
+      function playTease(){ // a quick descending pair when user clicks No
+        ensureAudio();
+        playTone(660,'sine',0.08,0,0.07);
+        playTone(520,'sine',0.12,0.09,0.055);
+      }
+
+      function playMelody(){ // short happy melody for Yes
+        ensureAudio();
+        const notes = [520,660,780,880];
+        notes.forEach((n,i)=> playTone(n,'sine',0.18,i*0.18,0.08));
+      }
+      function playChime() { // gentle chime on show result
+        ensureAudio();
+        playTone(1200,'sine',0.5,0,0.05);
+        playTone(900,'sine',0.6,0.08,0.04);
       }
 
       const nextBtn = document.getElementById('nextBtn');
@@ -186,6 +160,7 @@
       const hearts = document.getElementById('heartRow');
       const againBtn = document.getElementById('againBtn');
       const downloadBtn = document.getElementById('downloadBtn');
+
       let scale = 1.0;
 
       function generateCardImage() {
@@ -212,43 +187,54 @@
         return canvas.toDataURL('image/png');
       }
 
-      nextBtn.addEventListener('click', () => {
-        ensureAudio();
-        if (audioCtx && audioCtx.state === 'suspended') {
+      function show(el) {
+        el.style.display = '';
+        el.classList.add('show');
+        el.setAttribute('aria-hidden', 'false');
+      }
+
+      function hide(el) {
+        el.style.display = 'none';
+        el.classList.remove('show');
+        el.setAttribute('aria-hidden', 'true');
+      }
+
+      // Start audio on first user gesture if needed
+      function resumeAudioOnGesture(){
+        if(!audioCtx) return;
+        if(audioCtx.state === 'suspended'){
           audioCtx.resume();
         }
-        playPop();
+      }
+
+      nextBtn.addEventListener('click', ()=>{
+        // create context early so subsequent clicks are audible in all browsers
+        ensureAudio(); resumeAudioOnGesture(); playPop();
         hide(step1);
         show(step2);
         yesBtn.focus();
       });
 
-      noBtn.addEventListener('click', () => {
-        scale = Math.min(scale * 1.25, 6);
+      noBtn.addEventListener('click', ()=>{
+        // Make the Yes button bigger each time No is clicked
+        scale = Math.min(scale * 1.25, 6); // cap to avoid runaway size
         yesBtn.style.transform = `scale(${scale})`;
         yesBtn.style.transition = 'transform 300ms cubic-bezier(.2,.9,.2,1)';
+        // Add a playful wiggle to the No button so user sees reaction
         noBtn.classList.remove('wiggle');
-        void noBtn.offsetWidth;
+        void noBtn.offsetWidth; // force reflow to restart animation
         noBtn.classList.add('wiggle');
-        ensureAudio();
-        if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        playTease();
-        yesBtn.classList.add('pulse');
-        window.setTimeout(() => yesBtn.classList.remove('pulse'), 450);
+        // play a teasing sound
+        ensureAudio(); resumeAudioOnGesture(); playTease();
         yesBtn.focus();
       });
 
-      yesBtn.addEventListener('click', () => {
-        ensureAudio();
-        if (audioCtx && audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        playMelody();
-        window.setTimeout(playChime, 520);
+      yesBtn.addEventListener('click', ()=>{
+        ensureAudio(); resumeAudioOnGesture();
+        // sensory confirmation before changing view
+        playMelody(); setTimeout(playChime, 520);
         hide(step2);
-        resultMsg.innerHTML = `I love you soooo much, my love <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
+        resultMsg.innerHTML = `I love you soooo much, my bubu <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
         hearts.innerHTML = '';
         for (let i = 0; i < 18; i += 1) {
           const span = document.createElement('span');
@@ -275,7 +261,8 @@
         playPop();
       });
 
-      againBtn.addEventListener('click', () => {
+      againBtn.addEventListener('click', ()=>{
+        // reset flow
         hide(result);
         scale = 1.0;
         yesBtn.style.transform = '';
@@ -283,12 +270,11 @@
         nextBtn.focus();
       });
 
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter') {
+      // Allow keyboard support: Enter triggers focused button
+      document.addEventListener('keydown', (e)=>{
+        if(e.key === 'Enter'){
           const active = document.activeElement;
-          if (active && active.tagName === 'BUTTON') {
-            active.click();
-          }
+          if(active && active.tagName === 'BUTTON') active.click();
         }
       });
     })();

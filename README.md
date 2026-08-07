@@ -1,29 +1,18 @@
-# Anniversary Card
+# Anniversary
 
-A focused interactive anniversary experience implemented with HTML, CSS, and JavaScript.
+A cheerful interactive anniversary webpage built using HTML, CSS, and JavaScript.
 
-## Overview
-This repository contains a single-page celebration card that presents a greeting, prompts the visitor with a simple choice, and displays a final message with animated hearts and downloadable artwork.
+The page presents a loving greeting, a playful “Do you love me?” question, and an animated celebration when the answer is yes. It also includes a downloadable anniversary card image.
 
-## Features
-- A welcoming anniversary greeting screen.
-- An interactive prompt with responsive button behavior.
-- Animated hearts and audio feedback for a more engaging experience.
-- A downloadable PNG card generated directly in the browser.
+## How to use
 
-## Notes
-- The repository is suitable for personal use and can be configured as a private repository.
-- If the repository is kept private, the live GitHub Pages deployment will not be publicly accessible.
-
-## Development
-1. Edit files locally.
-2. Commit and push changes:
-   git add .
-   git commit -m "Update anniversary site"
-   git push
+1. Open `index.html` in a browser.
+2. Click the **Next** button to continue.
+3. Select **Yes** or **No** on the love question.
+4. If **Yes** is selected, the final message and card download option appear.
 
 ## Deployment
-When the repository is public, GitHub Pages can serve the site automatically from the `main` branch.
 
-## License
-Personal use only.
+For GitHub Pages, set the source to the `main` branch and the root folder `/`. If your account is `treta09` and the repository name is `anniversary`, the published site should be available at:
+
+`https://treta09.github.io/anniversary/`
