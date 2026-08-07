@@ -23,25 +23,57 @@
     <div class="container">
       <div class="stage">
         <div class="card" id="step1">
+          <div class="card-header">
+            <span class="badge">6 Years Together</span>
+            <span class="badge badge-soft">Forever starts today</span>
+          </div>
           <h2>Happy 6th Anniversary, my love</h2>
-          <p class="lead">Every moment with you is a treasure. Click Next to continue.</p>
+          <p class="lead">Every moment with you is a treasure. Click Next to continue our story.</p>
+          <div class="intro-art">
+            <div class="sparkle sparkle-1">✨</div>
+            <div class="sparkle sparkle-2">🌸</div>
+            <div class="sparkle sparkle-3">💖</div>
+          </div>
           <p><button class="btn" id="nextBtn" type="button">Next</button></p>
         </div>
 
         <div class="card" id="step2" aria-hidden="true" style="display:none">
+          <div class="card-header">
+            <span class="badge badge-soft">Tell me the truth</span>
+          </div>
           <h2>Do you love me?</h2>
+          <p class="lead">Choose wisely — love is the reason for every celebration.</p>
           <div class="options">
             <button class="opt yes" id="yesBtn" type="button">Yes</button>
             <button class="opt no" id="noBtn" type="button">No</button>
           </div>
+          <div class="small-note">Hint: the heart always knows.</div>
         </div>
 
         <div class="card" id="result" aria-hidden="true" style="display:none">
+          <div class="card-header">
+            <span class="badge">A message for you</span>
+          </div>
           <h2 id="resultMsg"></h2>
-          <div class="hearts" id="hearts" aria-hidden="true"></div>
+          <div class="heart-row" id="heartRow">
+            <span>💖</span>
+            <span>🌹</span>
+            <span>✨</span>
+          </div>
+          <div class="essay-block" id="essayBlock">
+            <p>I love you muhc my bubu please.</p>
+            <p>Each day with you is a bright chapter filled with laughter, comfort, and moments that turn ordinary time into something beautiful. I cherish the way your smile changes the room, the way your hand feels in mine, and the way our dreams feel easier when they are shared.</p>
+            <p>Today we celebrate what we have built together — a gentle, joyful love that grows stronger every year. Thank you for being the reason my heart feels at home.</p>
+          </div>
+          <div class="image-strip">
+            <div class="photo photo-small">❤</div>
+            <div class="photo photo-medium">🌼</div>
+            <div class="photo photo-small">✨</div>
+            <div class="photo photo-medium">🌙</div>
+          </div>
           <p>
-            <button class="btn download" id="downloadBtn" type="button" style="margin-top:0.5rem;margin-right:.5rem;">Download card</button>
-            <button class="btn" id="againBtn" type="button" style="margin-top:0.5rem;">Again</button>
+            <button class="btn download" id="downloadBtn" type="button">Download card</button>
+            <button class="btn" id="againBtn" type="button">Again</button>
           </p>
         </div>
       </div>
@@ -85,8 +117,8 @@
 
       function playMelody() {
         ensureAudio();
-        const notes = [520, 660, 780, 880];
-        notes.forEach((note, index) => playTone(note, 'sine', 0.18, index * 0.18, 0.08));
+        const notes = [520, 660, 780, 880, 1040];
+        notes.forEach((note, index) => playTone(note, 'sine', 0.18, index * 0.15, 0.08));
       }
 
       function playChime() {
@@ -95,14 +127,14 @@
         playTone(900, 'sine', 0.6, 0.08, 0.04);
       }
 
-      function show(element) {
-        element.style.display = '';
-        element.setAttribute('aria-hidden', 'false');
+      function show(el) {
+        el.style.display = '';
+        el.setAttribute('aria-hidden', 'false');
       }
 
-      function hide(element) {
-        element.style.display = 'none';
-        element.setAttribute('aria-hidden', 'true');
+      function hide(el) {
+        el.style.display = 'none';
+        el.setAttribute('aria-hidden', 'true');
       }
 
       function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
@@ -143,24 +175,19 @@
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         const gradient = ctx.createLinearGradient(0, 0, 0, height);
-        gradient.addColorStop(0, '#fff5f8');
-        gradient.addColorStop(1, '#ffffff');
+        gradient.addColorStop(0, '#ffe9f0');
+        gradient.addColorStop(1, '#fffaf7');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, width, height);
-        ctx.fillStyle = '#25303b';
-        ctx.font = '48px system-ui, Arial';
+        ctx.fillStyle = '#252a3d';
+        ctx.font = '54px system-ui, Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Happy 6th Anniversary, my love', width / 2, 120);
-        ctx.fillStyle = '#6b7785';
-        ctx.font = '28px system-ui, Arial';
-        wrapText(ctx, `I love you soooo much, my ${heartSymbol} ${heartSymbol} ${heartSymbol}`, width / 2, 200, 920, 36);
-        for (let i = 0; i < 14; i += 1) {
-          const x = 80 + Math.random() * (width - 160);
-          const y = 260 + Math.random() * 290;
-          ctx.fillStyle = '#ff3366';
-          ctx.font = `${18 + Math.random() * 36}px serif`;
-          ctx.fillText(heartSymbol, x, y);
-        }
+        ctx.fillText('Happy 6th Anniversary', width / 2, 120);
+        ctx.font = '32px system-ui, Arial';
+        wrapText(ctx, 'I love you muhc my bubu please. Every day with you feels brighter and every memory sweeter.', width / 2, 200, 920, 42);
+        ctx.fillStyle = '#ff3f7a';
+        ctx.font = '72px serif';
+        ctx.fillText('❤', width / 2, 420);
         return canvas.toDataURL('image/png');
       }
 
@@ -200,7 +227,7 @@
         playMelody();
         window.setTimeout(playChime, 520);
         hide(step2);
-        resultMsg.innerHTML = `I love you soooo much, my bubu <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
+        resultMsg.innerHTML = `I love you muhc my bubu please <span class="heart">${heartSymbol}${heartSymbol}${heartSymbol}</span>`;
         hearts.innerHTML = '';
         for (let i = 0; i < 18; i += 1) {
           const span = document.createElement('span');
@@ -208,7 +235,7 @@
           span.textContent = heartSymbol;
           span.style.left = `${10 + Math.random() * 80}%`;
           span.style.animationDelay = `${Math.random() * 1.5}s`;
-          span.style.fontSize = `${12 + Math.random() * 36}px`;
+          span.style.fontSize = `${18 + Math.random() * 42}px`;
           hearts.appendChild(span);
         }
         show(result);
