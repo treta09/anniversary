@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Anniversary — Interactive Card</title>
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <div class="background-glow"></div>
@@ -107,12 +107,9 @@
   </main>
 
   <script>
-    (function () {
-      // Simple WebAudio helper for short UI sounds
+    (function () {      // Simple WebAudio helper for short UI sounds
       let audioCtx = null;
-      const heartSymbol = '💖';
-      function ensureAudio() {
-        if (audioCtx) return;
+      const heartSymbol = '💖';      function ensureAudio() {        if (audioCtx) return;
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       }
 
@@ -160,8 +157,7 @@
         const notes = [520,660,780,880];
         notes.forEach((n,i)=> playTone(n,'sine',0.18,i*0.18,0.08));
       }
-
-      function playChime() { // gentle chime on show result
+      function playChime() { // gentle chime on show result
         ensureAudio();
         playTone(1200,'sine',0.5,0,0.05);
         playTone(900,'sine',0.6,0.08,0.04);
